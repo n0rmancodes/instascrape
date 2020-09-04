@@ -1,0 +1,29 @@
+{
+  "name": "instascrape",
+  "version": "1.0.0",
+  "description": "instagram terminal scraping tool.",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test/singleProfile.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/n0rmancodes/instascrape.git"
+  },
+  "keywords": [
+    "instagram",
+    "archive",
+    "scraping"
+  ],
+  "author": "n0rmancodes",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/n0rmancodes/instascrape/issues"
+  },
+  "homepage": "https://github.com/n0rmancodes/instascrape#readme",
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "instagram-private-api": "^1.41.0",
+    "request": "^2.88.2"
+  }
+}
