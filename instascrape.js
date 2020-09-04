@@ -174,7 +174,7 @@ if (config.username == "" | config.password == "") {console.log(chalk.red("pleas
                     continue;
                 }
             } 
-        } else {
+        } else if (args[0] == "--self") {
             const u = await ig.feed.user(l.pk).request();
             if (!fs.existsSync("./images/" + l.username)) {fs.mkdirSync("./images/" + l.username)}
             console.log("scraping " + l.username + "'s posts")
