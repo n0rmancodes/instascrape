@@ -26,13 +26,14 @@ via connecting to a proxy or a VPN like [Windscribe](https://windscribe.com).
 2. Install dependencies via ``npm i``.
 3. Run the command ``node firstrun.js``.
 4. Open the ``config.json`` file it generated to configurate the program by entering your username and password.
+5. [See the usage part of this document to find how you can use this program](https://github.com/n0rmancodes/instascrape#usage)
 
 ## usage
-#### All accounts you follow
+#### all accounts you follow
 Run ``node instascrape.js`` to scrape all accounts that you follow.
-#### A certian account you follow
+#### a certian account you follow
 Run ``node instascrape.js --user [username]`` to scrape certain users.
 
 *You must be following the account to scrape it.*
-#### Scrape your own account
+#### scrape your own account
 Run ``node instascrape.js --self`` to scrape your own account.
