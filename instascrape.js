@@ -32,7 +32,13 @@ if (config.username == "" | config.password == "") {console.log(chalk.red("pleas
             if (!fs.existsSync("./images")) {fs.mkdirSync("./images/");}
             for (var c in fl.users) {
                 const u = await ig.feed.user(fl.users[c].pk).request();
-                if (!fs.existsSync("./images/" + fl.users[c].username)) {fs.mkdirSync("./images/" + fl.users[c].username)}
+                if (!u.items.length > 0) {
+                    console.log("- skipping " + fl.users[c].username + " (has no posts)");
+                    continue;
+                }
+                if (!fs.existsSync("./images/" + fl.users[c].username)) {
+                    fs.mkdirSync("./images/" + fl.users[c].username)
+                }
                 console.log("- scraping " + fl.users[c].username + "'s posts");
                 for (var d in u.items) {
                     if (u.items[d].carousel_media) {
