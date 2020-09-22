@@ -4,7 +4,7 @@ InstaScrape is a terminal tool used to scrape Instagram pages quickly and effici
 ## Disclaimer
 This tool is not authorized and may lead to your account being suspended or kicked off
 Instagram. Use this tool at your own risk. I am not responsible for what Instagram does
-if they catch you using this tool.
+if they catch you using this tool. *However, I use this personally and I haven't gotten caught.*
 
 Your credentials never leave the Instagram servers. If you don't believe me, you can run Wireshark 
 or any other network analysing program to see all outgoing connections are going exclusively to 
