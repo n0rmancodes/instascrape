@@ -3,7 +3,8 @@ const chalk = require("chalk");
 
 var data = JSON.stringify({
     username: "",
-    password: ""
+    password: "",
+    verbose: false
 })
 
 if (fs.existsSync("config.json")) {
