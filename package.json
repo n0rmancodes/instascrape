@@ -23,7 +23,7 @@
   "homepage": "https://github.com/n0rmancodes/instascrape#readme",
   "dependencies": {
     "chalk": "^4.1.0",
-    "instagram-private-api": "^1.41.0",
+    "instagram-private-api": "^1.43.1",
     "request": "^2.88.2"
   }
 }

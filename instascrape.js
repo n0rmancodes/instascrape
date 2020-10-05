@@ -1,4 +1,4 @@
-const { IgApiClient, IgResponseError }  = require('instagram-private-api');
+const { IgApiClient }  = require('instagram-private-api');
 const fs = require("fs");
 const chalk = require("chalk");
 const req = require("request");
@@ -23,7 +23,7 @@ if (config.username == "" | config.password == "") {console.log(chalk.red("pleas
     process.nextTick(async () => {
         await ig.simulate.postLoginFlow();
         if (!args[0]) {
-            console.log("getting your follower list");
+            console.log("getting your follower list...");
             var fl = await ig.feed.accountFollowing(l.pk).request();
             console.log("getting your follower's posts...");
             if (!fs.existsSync("./images")) {fs.mkdirSync("./images/");}
