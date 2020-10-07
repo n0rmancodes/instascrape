@@ -36,30 +36,16 @@ if (config.username == "" | config.password == "") {console.log(chalk.red("pleas
                 }
                 for (var d in u) {
                     if (u[d].carousel_media) {
-                        // carousel media
-                        var foldName = "./images/" + fl.users[c].username + "/" + u[d].id;
-                        if (fs.existsSync(fileName)) {
-                            if (config.verbose && config.verbose == true) {
-                                console.log("[i] already downloaded " + u[d].id);
-                                continue;
-                            } else {
-                                continue;
-                            }
+                        if (fs.existsSync(foldName)) {
+                            console.log("[i] already downloaded " + u[d].id);
+                            continue;
                         } else {
                             for (var e in u[d].carousel_media) {
                                 if (u[d].carousel_media[e].image_versions2 && !u[d].carousel_media[e].video_versions) {
                                     // carousel images
-                                    if (!fs.existsSync("./images/" + fl.users[c].username + "/" + u[d].id + "/")) {fs.mkdirSync("./images/" + fl.users[c].username + "/" + u[d].id + "/")}
-                                    var fileName = "./images/" + fl.users[c].username + "/" + u[d].id + "/" + u[d].carousel_media[e].id + ".jpg";
-                                    var itemId = "[i] downloaded " + u[d].carousel_media[e].id + " from " + fl.users[c].username + " (carousel media)";
-                                    if (fs.existsSync(fileName)) {
-                                        if (config.verbose && config.verbose == true) {
-                                            console.log("[i] already downloaded " + u[d].id);
-                                            continue;
-                                        } else {
-                                            continue;
-                                        }
-                                    }
+                                    if (!fs.existsSync("./images/" +  fl.users[c].username + "/" + u[d].id + "/")) {fs.mkdirSync("./images/" + fl.users[c].username + "/" + u[d].id + "/")}
+                                    var fileName = "./images/" +  fl.users[c].username + "/" + u[d].id + "/" + u[d].carousel_media[e].id + ".jpg";
+                                    var itemId = "[i] downloaded " + u[d].carousel_media[e].id + " from " +  fl.users[c].username  + " (carousel media)";
                                     var bestUrl = u[d].carousel_media[e].image_versions2.candidates[0].url;
                                     var fn = fs.createWriteStream(fileName);
                                     fs.appendFileSync(fileName, "");
@@ -69,9 +55,9 @@ if (config.username == "" | config.password == "") {console.log(chalk.red("pleas
                                     console.log(itemId);
                                 } else if (u[d].carousel_media[e].video_versions) {
                                     // carousel videos
-                                    if (!fs.existsSync("./images/" + fl.users[c].username + "/" + u[d].id + "/")) {fs.mkdirSync("./images/" + fl.users[c].username + "/" + u[d].id + "/")}
-                                    var fileName = "./images/" + fl.users[c].username + "/" + u[d].id + "/" + u[d].carousel_media[e].id + ".mp4";
-                                    var itemId = "[i] downloaded " + u[d].carousel_media[e].id + " from " + fl.users[c].username + " (carousel media)";
+                                    if (!fs.existsSync("./images/" +  fl.users[c].username  + "/" + u[d].id + "/")) {fs.mkdirSync("./images/" +  fl.users[c].username  + "/" + u[d].id + "/")}
+                                    var fileName = "./images/" +  fl.users[c].username  + "/" + u[d].id + "/" + u[d].carousel_media[e].id + ".mp4";
+                                    var itemId = "[i] downloaded " + u[d].carousel_media[e].id + " from " +  fl.users[c].username + " (carousel media)";
                                     var bestUrl = u[d].carousel_media[e].video_versions[0].url;
                                     var fn = fs.createWriteStream(fileName);
                                     fs.appendFileSync(fileName, "");
