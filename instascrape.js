@@ -28,15 +28,12 @@ if (config.username == "" | config.password == "") {console.log(chalk.red("pleas
             console.log("getting your follower's posts...");
             if (!fs.existsSync("./images")) {fs.mkdirSync("./images/");}
             for (var c in fl.users) {
+                console.log("- scraping " + fl.users[c].username + "'s posts");
                 const u = await getAllItemsFromFeed(ig.feed.user(fl.users[c].pk));
-                if (!u.length > 0) {
-                    console.log("- skipping " + fl.users[c].username + " (has no posts)");
-                    continue;
-                }
+                console.log("-- has " + u.length.toLocaleString() + " posts");
                 if (!fs.existsSync("./images/" + fl.users[c].username)) {
                     fs.mkdirSync("./images/" + fl.users[c].username)
                 }
-                console.log("- scraping " + fl.users[c].username + "'s posts");
                 for (var d in u) {
                     if (u[d].carousel_media) {
                         // carousel media
@@ -132,9 +129,10 @@ if (config.username == "" | config.password == "") {console.log(chalk.red("pleas
             console.log("checking your follow list...")
             for (var c in fl.users) {
                 if (fl.users[c].username == user) {
+                    console.log("- scraping " + fl.users[c].username + "'s posts");
                     const u = await getAllItemsFromFeed(ig.feed.user(fl.users[c].pk));
                     if (!fs.existsSync("./images/" + fl.users[c].username)) {fs.mkdirSync("./images/" + fl.users[c].username)}
-                    console.log("- scraping " + fl.users[c].username + "'s posts");
+                    console.log("-- has " + u.length.toLocaleString() + " posts");
                     for (var d in u) {
                         if (u[d].carousel_media) {
                             // carousel media
@@ -216,9 +214,10 @@ if (config.username == "" | config.password == "") {console.log(chalk.red("pleas
                 }
             } 
         } else if (args[0] == "--self") {
+            console.log("scraping " + l.username + "'s posts");
             const u = await getAllItemsFromFeed(ig.feed.user(l.pk));
+            console.log("-- has " + u.length.toLocaleString() + " posts");
             if (!fs.existsSync("./images/" + l.username)) {fs.mkdirSync("./images/" + l.username)}
-            console.log("scraping " + l.username + "'s posts")
             for (var d in u) {
                 if (u[d].carousel_media) {
                     // carousel media
