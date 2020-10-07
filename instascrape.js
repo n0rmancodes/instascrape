@@ -1,4 +1,4 @@
-const { IgApiClient }  = require('instagram-private-api');
+const { IgApiClient, RequestError }  = require('instagram-private-api');
 const fs = require("fs");
 const chalk = require("chalk");
 const req = require("request");
@@ -36,9 +36,14 @@ if (config.username == "" | config.password == "") {console.log(chalk.red("pleas
                 }
                 for (var d in u) {
                     if (u[d].carousel_media) {
+                        var foldName = "./images/" +  fl.users[c].username + "/" + u[d].id + "/"
                         if (fs.existsSync(foldName)) {
-                            console.log("[i] already downloaded " + u[d].id);
-                            continue;
+                            if (config.verbose && config.verbose == true) {
+                                console.log("[i] already downloaded " + u[d].id);
+                                continue;
+                            } else {
+                                continue;
+                            }
                         } else {
                             for (var e in u[d].carousel_media) {
                                 if (u[d].carousel_media[e].image_versions2 && !u[d].carousel_media[e].video_versions) {
@@ -124,8 +129,12 @@ if (config.username == "" | config.password == "") {console.log(chalk.red("pleas
                             // carousel media
                             var foldName = "./images/" + fl.users[c].username + "/" + u[d].id;
                             if (fs.existsSync(foldName)) {
-                                console.log("[i] already downloaded " + u[d].id);
-                                continue;
+                                if (config.verbose && config.verbose == true) {
+                                    console.log("[i] already downloaded " + u[d].id);
+                                    continue;
+                                } else {
+                                    continue;
+                                }
                             } else {
                                 for (var e in u[d].carousel_media) {
                                     if (u[d].carousel_media[e].image_versions2 && !u[d].carousel_media[e].video_versions) {
@@ -209,8 +218,12 @@ if (config.username == "" | config.password == "") {console.log(chalk.red("pleas
                     // carousel media
                     var foldName = "./images/" + l.username + "/" + u[d].id;
                     if (fs.existsSync(foldName)) {
-                        console.log("[i] already downloaded " + u[d].id);
-                        continue;
+                        if (config.verbose && config.verbose == true) {
+                            console.log("[i] already downloaded " + u[d].id);
+                            continue;
+                        } else {
+                            continue;
+                        }
                     } else {
                         for (var e in u[d].carousel_media) {
                             if (u[d].carousel_media[e].image_versions2 && !u[d].carousel_media[e].video_versions) {
@@ -293,7 +306,7 @@ function cls() {
 async function getAllItemsFromFeed(feed) {
     let items = [];
     do {
-        items = items.concat(await feed.items());
+        items = items.concat(await feed.items().catch(RequestError, function () {return items;}));
     } while(feed.isMoreAvailable());
     return items;
 }
