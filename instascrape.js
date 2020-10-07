@@ -28,8 +28,8 @@ if (config.username == "" | config.password == "") {console.log(chalk.red("pleas
             console.log("getting your follower's posts...");
             if (!fs.existsSync("./images")) {fs.mkdirSync("./images/");}
             for (var c in fl.users) {
-                const u = await ig.feed.user(fl.users[c].pk).request();
-                if (!u.items.length > 0) {
+                const u = await getAllItemsFromFeed(ig.feed.user(fl.users[c].pk));
+                if (!u.length > 0) {
                     console.log("- skipping " + fl.users[c].username + " (has no posts)");
                     continue;
                 }
@@ -37,45 +37,45 @@ if (config.username == "" | config.password == "") {console.log(chalk.red("pleas
                     fs.mkdirSync("./images/" + fl.users[c].username)
                 }
                 console.log("- scraping " + fl.users[c].username + "'s posts");
-                for (var d in u.items) {
-                    if (u.items[d].carousel_media) {
+                for (var d in u) {
+                    if (u[d].carousel_media) {
                         // carousel media
-                        var foldName = "./images/" + fl.users[c].username + "/" + u.items[d].id;
+                        var foldName = "./images/" + fl.users[c].username + "/" + u[d].id;
                         if (fs.existsSync(fileName)) {
                             if (config.verbose && config.verbose == true) {
-                                console.log("[i] already downloaded " + u.items[d].id);
+                                console.log("[i] already downloaded " + u[d].id);
                                 continue;
                             } else {
                                 continue;
                             }
                         } else {
-                            for (var e in u.items[d].carousel_media) {
-                                if (u.items[d].carousel_media[e].image_versions2 && !u.items[d].carousel_media[e].video_versions) {
+                            for (var e in u[d].carousel_media) {
+                                if (u[d].carousel_media[e].image_versions2 && !u[d].carousel_media[e].video_versions) {
                                     // carousel images
-                                    if (!fs.existsSync("./images/" + fl.users[c].username + "/" + u.items[d].id + "/")) {fs.mkdirSync("./images/" + fl.users[c].username + "/" + u.items[d].id + "/")}
-                                    var fileName = "./images/" + fl.users[c].username + "/" + u.items[d].id + "/" + u.items[d].carousel_media[e].id + ".jpg";
-                                    var itemId = "[i] downloaded " + u.items[d].carousel_media[e].id + " from " + fl.users[c].username + " (carousel media)";
+                                    if (!fs.existsSync("./images/" + fl.users[c].username + "/" + u[d].id + "/")) {fs.mkdirSync("./images/" + fl.users[c].username + "/" + u[d].id + "/")}
+                                    var fileName = "./images/" + fl.users[c].username + "/" + u[d].id + "/" + u[d].carousel_media[e].id + ".jpg";
+                                    var itemId = "[i] downloaded " + u[d].carousel_media[e].id + " from " + fl.users[c].username + " (carousel media)";
                                     if (fs.existsSync(fileName)) {
                                         if (config.verbose && config.verbose == true) {
-                                            console.log("[i] already downloaded " + u.items[d].id);
+                                            console.log("[i] already downloaded " + u[d].id);
                                             continue;
                                         } else {
                                             continue;
                                         }
                                     }
-                                    var bestUrl = u.items[d].carousel_media[e].image_versions2.candidates[0].url;
+                                    var bestUrl = u[d].carousel_media[e].image_versions2.candidates[0].url;
                                     var fn = fs.createWriteStream(fileName);
                                     fs.appendFileSync(fileName, "");
                                     req(bestUrl).on("error", function(e) {
                                         //ignore errors
                                     }).pipe(fn);
                                     console.log(itemId);
-                                } else if (u.items[d].carousel_media[e].video_versions) {
+                                } else if (u[d].carousel_media[e].video_versions) {
                                     // carousel videos
-                                    if (!fs.existsSync("./images/" + fl.users[c].username + "/" + u.items[d].id + "/")) {fs.mkdirSync("./images/" + fl.users[c].username + "/" + u.items[d].id + "/")}
-                                    var fileName = "./images/" + fl.users[c].username + "/" + u.items[d].id + "/" + u.items[d].carousel_media[e].id + ".mp4";
-                                    var itemId = "[i] downloaded " + u.items[d].carousel_media[e].id + " from " + fl.users[c].username + " (carousel media)";
-                                    var bestUrl = u.items[d].carousel_media[e].video_versions[0].url;
+                                    if (!fs.existsSync("./images/" + fl.users[c].username + "/" + u[d].id + "/")) {fs.mkdirSync("./images/" + fl.users[c].username + "/" + u[d].id + "/")}
+                                    var fileName = "./images/" + fl.users[c].username + "/" + u[d].id + "/" + u[d].carousel_media[e].id + ".mp4";
+                                    var itemId = "[i] downloaded " + u[d].carousel_media[e].id + " from " + fl.users[c].username + " (carousel media)";
+                                    var bestUrl = u[d].carousel_media[e].video_versions[0].url;
                                     var fn = fs.createWriteStream(fileName);
                                     fs.appendFileSync(fileName, "");
                                     req(bestUrl).on("error", function(e) {
@@ -85,38 +85,38 @@ if (config.username == "" | config.password == "") {console.log(chalk.red("pleas
                                 }
                             }
                         }
-                    } else if (u.items[d].image_versions2 && u.items[d].video_versions) {
+                    } else if (u[d].image_versions2 && u[d].video_versions) {
                         // single videos 
-                        var fileName = "./images/" + fl.users[c].username + "/" + u.items[d].id + ".mp4";
+                        var fileName = "./images/" + fl.users[c].username + "/" + u[d].id + ".mp4";
                         if (fs.existsSync(fileName)) {
                             if (config.verbose && config.verbose == true) {
-                                console.log("[i] already downloaded " + u.items[d].id);
+                                console.log("[i] already downloaded " + u[d].id);
                                 continue;
                             } else {
                                 continue;
                             }
                         }
-                        var itemId = "[i] downloaded " + u.items[d].id.toString() + " from " + fl.users[c].username;                                
-                        var bestUrl = u.items[d].video_versions[0].url;
+                        var itemId = "[i] downloaded " + u[d].id.toString() + " from " + fl.users[c].username;                                
+                        var bestUrl = u[d].video_versions[0].url;
                         var fn = fs.createWriteStream(fileName);
                         fs.appendFileSync(fileName, "");
                         req(bestUrl).on("error", function(e) {
                             //ignore errors
                         }).pipe(fn);
                         console.log(itemId);
-                    } else if (u.items[d].image_versions2 && !u.items[d].video_versions) {
+                    } else if (u[d].image_versions2 && !u[d].video_versions) {
                         // single images
-                        var fileName = "./images/" + fl.users[c].username + "/" + u.items[d].id + ".jpg";
-                        var itemId = "[i] downloaded " + u.items[d].id.toString() + " from " + fl.users[c].username;
+                        var fileName = "./images/" + fl.users[c].username + "/" + u[d].id + ".jpg";
+                        var itemId = "[i] downloaded " + u[d].id.toString() + " from " + fl.users[c].username;
                         if (fs.existsSync(fileName)) {
                             if (config.verbose && config.verbose == true) {
-                                console.log("[i] already downloaded " + u.items[d].id);
+                                console.log("[i] already downloaded " + u[d].id);
                                 continue;
                             } else {
                                 continue;
                             }
                         }
-                        var bestUrl = u.items[d].image_versions2.candidates[0].url;
+                        var bestUrl = u[d].image_versions2.candidates[0].url;
                         var fn = fs.createWriteStream(fileName);
                         fs.appendFileSync(fileName, "");
                         req(bestUrl).on("error", function(e) {
@@ -132,36 +132,36 @@ if (config.username == "" | config.password == "") {console.log(chalk.red("pleas
             console.log("checking your follow list...")
             for (var c in fl.users) {
                 if (fl.users[c].username == user) {
-                    const u = await ig.feed.user(fl.users[c].pk).request();
+                    const u = await getAllItemsFromFeed(ig.feed.user(fl.users[c].pk));
                     if (!fs.existsSync("./images/" + fl.users[c].username)) {fs.mkdirSync("./images/" + fl.users[c].username)}
                     console.log("- scraping " + fl.users[c].username + "'s posts");
-                    for (var d in u.items) {
-                        if (u.items[d].carousel_media) {
+                    for (var d in u) {
+                        if (u[d].carousel_media) {
                             // carousel media
-                            var foldName = "./images/" + fl.users[c].username + "/" + u.items[d].id;
+                            var foldName = "./images/" + fl.users[c].username + "/" + u[d].id;
                             if (fs.existsSync(foldName)) {
-                                console.log("[i] already downloaded " + u.items[d].id);
+                                console.log("[i] already downloaded " + u[d].id);
                                 continue;
                             } else {
-                                for (var e in u.items[d].carousel_media) {
-                                    if (u.items[d].carousel_media[e].image_versions2 && !u.items[d].carousel_media[e].video_versions) {
+                                for (var e in u[d].carousel_media) {
+                                    if (u[d].carousel_media[e].image_versions2 && !u[d].carousel_media[e].video_versions) {
                                         // carousel images
-                                        if (!fs.existsSync("./images/" + fl.users[c].username + "/" + u.items[d].id + "/")) {fs.mkdirSync("./images/" + fl.users[c].username + "/" + u.items[d].id + "/")}
-                                        var fileName = "./images/" + fl.users[c].username + "/" + u.items[d].id + "/" + u.items[d].carousel_media[e].id + ".jpg";
-                                        var itemId = "[i] downloaded " + u.items[d].carousel_media[e].id + " from " + fl.users[c].username + " (carousel media)";
-                                        var bestUrl = u.items[d].carousel_media[e].image_versions2.candidates[0].url;
+                                        if (!fs.existsSync("./images/" + fl.users[c].username + "/" + u[d].id + "/")) {fs.mkdirSync("./images/" + fl.users[c].username + "/" + u[d].id + "/")}
+                                        var fileName = "./images/" + fl.users[c].username + "/" + u[d].id + "/" + u[d].carousel_media[e].id + ".jpg";
+                                        var itemId = "[i] downloaded " + u[d].carousel_media[e].id + " from " + fl.users[c].username + " (carousel media)";
+                                        var bestUrl = u[d].carousel_media[e].image_versions2.candidates[0].url;
                                         var fn = fs.createWriteStream(fileName);
                                         fs.appendFileSync(fileName, "");
                                         req(bestUrl).on("error", function(e) {
                                             //ignore errors
                                         }).pipe(fn);
                                         console.log(itemId);
-                                    } else if (u.items[d].carousel_media[e].video_versions) {
+                                    } else if (u[d].carousel_media[e].video_versions) {
                                         // carousel videos
-                                        if (!fs.existsSync("./images/" + fl.users[c].username + "/" + u.items[d].id + "/")) {fs.mkdirSync("./images/" + fl.users[c].username + "/" + u.items[d].id + "/")}
-                                        var fileName = "./images/" + fl.users[c].username + "/" + u.items[d].id + "/" + u.items[d].carousel_media[e].id + ".mp4";
-                                        var itemId = "[i] downloaded " + u.items[d].carousel_media[e].id + " from " + fl.users[c].username + " (carousel media)";
-                                        var bestUrl = u.items[d].carousel_media[e].video_versions[0].url;
+                                        if (!fs.existsSync("./images/" + fl.users[c].username + "/" + u[d].id + "/")) {fs.mkdirSync("./images/" + fl.users[c].username + "/" + u[d].id + "/")}
+                                        var fileName = "./images/" + fl.users[c].username + "/" + u[d].id + "/" + u[d].carousel_media[e].id + ".mp4";
+                                        var itemId = "[i] downloaded " + u[d].carousel_media[e].id + " from " + fl.users[c].username + " (carousel media)";
+                                        var bestUrl = u[d].carousel_media[e].video_versions[0].url;
                                         var fn = fs.createWriteStream(fileName);
                                         fs.appendFileSync(fileName, "");
                                         req(bestUrl).on("error", function(e) {
@@ -171,38 +171,38 @@ if (config.username == "" | config.password == "") {console.log(chalk.red("pleas
                                     }
                                 }
                             }
-                        } else if (u.items[d].image_versions2 && u.items[d].video_versions) {
+                        } else if (u[d].image_versions2 && u[d].video_versions) {
                             // single videos 
-                            var fileName = "./images/" + fl.users[c].username + "/" + u.items[d].id + ".mp4";
+                            var fileName = "./images/" + fl.users[c].username + "/" + u[d].id + ".mp4";
                             if (fs.existsSync(fileName)) {
                                 if (config.verbose && config.verbose == true) {
-                                    console.log("[i] already downloaded " + u.items[d].id);
+                                    console.log("[i] already downloaded " + u[d].id);
                                     continue;
                                 } else {
                                     continue;
                                 }
                             }
-                            var itemId = "[i] downloaded " + u.items[d].id.toString() + " from " + fl.users[c].username;                                
-                            var bestUrl = u.items[d].video_versions[0].url;
+                            var itemId = "[i] downloaded " + u[d].id.toString() + " from " + fl.users[c].username;                                
+                            var bestUrl = u[d].video_versions[0].url;
                             var fn = fs.createWriteStream(fileName);
                             fs.appendFileSync(fileName, "");
                             req(bestUrl).on("error", function(e) {
                                 //ignore errors
                             }).pipe(fn);
                             console.log(itemId);
-                        } else if (u.items[d].image_versions2 && !u.items[d].video_versions) {
+                        } else if (u[d].image_versions2 && !u[d].video_versions) {
                             // single images
-                            var fileName = "./images/" + fl.users[c].username + "/" + u.items[d].id + ".jpg";
-                            var itemId = "[i] downloaded " + u.items[d].id.toString() + " from " + fl.users[c].username;
+                            var fileName = "./images/" + fl.users[c].username + "/" + u[d].id + ".jpg";
+                            var itemId = "[i] downloaded " + u[d].id.toString() + " from " + fl.users[c].username;
                             if (fs.existsSync(fileName)) {
                                 if (config.verbose && config.verbose == true) {
-                                    console.log("[i] already downloaded " + u.items[d].id);
+                                    console.log("[i] already downloaded " + u[d].id);
                                     continue;
                                 } else {
                                     continue;
                                 }
                             }
-                            var bestUrl = u.items[d].image_versions2.candidates[0].url;
+                            var bestUrl = u[d].image_versions2.candidates[0].url;
                             var fn = fs.createWriteStream(fileName);
                             fs.appendFileSync(fileName, "");
                             req(bestUrl).on("error", function(e) {
@@ -216,36 +216,36 @@ if (config.username == "" | config.password == "") {console.log(chalk.red("pleas
                 }
             } 
         } else if (args[0] == "--self") {
-            const u = await ig.feed.user(l.pk).request();
+            const u = await getAllItemsFromFeed(ig.feed.user(l.pk));
             if (!fs.existsSync("./images/" + l.username)) {fs.mkdirSync("./images/" + l.username)}
             console.log("scraping " + l.username + "'s posts")
-            for (var d in u.items) {
-                if (u.items[d].carousel_media) {
+            for (var d in u) {
+                if (u[d].carousel_media) {
                     // carousel media
-                    var foldName = "./images/" + l.username + "/" + u.items[d].id;
+                    var foldName = "./images/" + l.username + "/" + u[d].id;
                     if (fs.existsSync(foldName)) {
-                        console.log("[i] already downloaded " + u.items[d].id);
+                        console.log("[i] already downloaded " + u[d].id);
                         continue;
                     } else {
-                        for (var e in u.items[d].carousel_media) {
-                            if (u.items[d].carousel_media[e].image_versions2 && !u.items[d].carousel_media[e].video_versions) {
+                        for (var e in u[d].carousel_media) {
+                            if (u[d].carousel_media[e].image_versions2 && !u[d].carousel_media[e].video_versions) {
                                 // carousel images
-                                if (!fs.existsSync("./images/" + l.username + "/" + u.items[d].id + "/")) {fs.mkdirSync("./images/" + l.username + "/" + u.items[d].id + "/")}
-                                var fileName = "./images/" + l.username + "/" + u.items[d].id + "/" + u.items[d].carousel_media[e].id + ".jpg";
-                                var itemId = "[i] downloaded " + u.items[d].carousel_media[e].id + " from " + l.username + " (carousel media)";
-                                var bestUrl = u.items[d].carousel_media[e].image_versions2.candidates[0].url;
+                                if (!fs.existsSync("./images/" + l.username + "/" + u[d].id + "/")) {fs.mkdirSync("./images/" + l.username + "/" + u[d].id + "/")}
+                                var fileName = "./images/" + l.username + "/" + u[d].id + "/" + u[d].carousel_media[e].id + ".jpg";
+                                var itemId = "[i] downloaded " + u[d].carousel_media[e].id + " from " + l.username + " (carousel media)";
+                                var bestUrl = u[d].carousel_media[e].image_versions2.candidates[0].url;
                                 var fn = fs.createWriteStream(fileName);
                                 fs.appendFileSync(fileName, "");
                                 req(bestUrl).on("error", function(e) {
                                     //ignore errors
                                 }).pipe(fn);
                                 console.log(itemId);
-                            } else if (u.items[d].carousel_media[e].video_versions) {
+                            } else if (u[d].carousel_media[e].video_versions) {
                                 // carousel videos
-                                if (!fs.existsSync("./images/" + l.username + "/" + u.items[d].id + "/")) {fs.mkdirSync("./images/" + l.username + "/" + u.items[d].id + "/")}
-                                var fileName = "./images/" + l.username + "/" + u.items[d].id + "/" + u.items[d].carousel_media[e].id + ".mp4";
-                                var itemId = "[i] downloaded " + u.items[d].carousel_media[e].id + " from " + l.username + " (carousel media)";
-                                var bestUrl = u.items[d].carousel_media[e].video_versions[0].url;
+                                if (!fs.existsSync("./images/" + l.username + "/" + u[d].id + "/")) {fs.mkdirSync("./images/" + l.username + "/" + u[d].id + "/")}
+                                var fileName = "./images/" + l.username + "/" + u[d].id + "/" + u[d].carousel_media[e].id + ".mp4";
+                                var itemId = "[i] downloaded " + u[d].carousel_media[e].id + " from " + l.username + " (carousel media)";
+                                var bestUrl = u[d].carousel_media[e].video_versions[0].url;
                                 var fn = fs.createWriteStream(fileName);
                                 fs.appendFileSync(fileName, "");
                                 req(bestUrl).on("error", function(e) {
@@ -255,38 +255,38 @@ if (config.username == "" | config.password == "") {console.log(chalk.red("pleas
                             }
                         }
                     }
-                } else if (u.items[d].image_versions2 && u.items[d].video_versions) {
+                } else if (u[d].image_versions2 && u[d].video_versions) {
                     // single videos 
-                    var fileName = "./images/" + l.username + "/" + u.items[d].id + ".mp4";
+                    var fileName = "./images/" + l.username + "/" + u[d].id + ".mp4";
                     if (fs.existsSync(fileName)) {
                         if (config.verbose && config.verbose == true) {
-                            console.log("[i] already downloaded " + u.items[d].id);
+                            console.log("[i] already downloaded " + u[d].id);
                             continue;
                         } else {
                             continue;
                         }
                     }
-                    var itemId = "[i] downloaded " + u.items[d].id.toString() + " from " + l.username;                                
-                    var bestUrl = u.items[d].video_versions[0].url;
+                    var itemId = "[i] downloaded " + u[d].id.toString() + " from " + l.username;                                
+                    var bestUrl = u[d].video_versions[0].url;
                     var fn = fs.createWriteStream(fileName);
                     fs.appendFileSync(fileName, "");
                     req(bestUrl).on("error", function(e) {
                         //ignore errors
                     }).pipe(fn);
                     console.log(itemId);
-                } else if (u.items[d].image_versions2 && !u.items[d].video_versions) {
+                } else if (u[d].image_versions2 && !u[d].video_versions) {
                     // single images
-                    var fileName = "./images/" + l.username + "/" + u.items[d].id + ".jpg";
-                    var itemId = "[i] downloaded " + u.items[d].id.toString() + " from " + l.username;
+                    var fileName = "./images/" + l.username + "/" + u[d].id + ".jpg";
+                    var itemId = "[i] downloaded " + u[d].id.toString() + " from " + l.username;
                     if (fs.existsSync(fileName)) {
                         if (config.verbose && config.verbose == true) {
-                            console.log("[i] already downloaded " + u.items[d].id);
+                            console.log("[i] already downloaded " + u[d].id);
                             continue;
                         } else {
                             continue;
                         }
                     }
-                    var bestUrl = u.items[d].image_versions2.candidates[0].url;
+                    var bestUrl = u[d].image_versions2.candidates[0].url;
                     var fn = fs.createWriteStream(fileName);
                     fs.appendFileSync(fileName, "");
                     req(bestUrl).on("error", function(e) {
@@ -303,4 +303,12 @@ function cls() {
     console.clear();
     console.log(chalk.blue("instascrape - instagram scraper"));
     console.log("===============================");
+}
+
+async function getAllItemsFromFeed(feed) {
+    let items = [];
+    do {
+        items = items.concat(await feed.items());
+    } while(feed.isMoreAvailable());
+    return items;
 }
